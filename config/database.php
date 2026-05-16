@@ -64,6 +64,38 @@ return [
             ]) : [],
         ],
 
+        'menudirect' => [
+            'driver' => 'mysql',
+            'host' => env('MENUDIRECT_DB_HOST', '127.0.0.1'),
+            'port' => env('MENUDIRECT_DB_PORT', '3306'),
+            'database' => env('MENUDIRECT_DB_DATABASE', 'menudirect'),
+            'username' => env('MENUDIRECT_DB_USERNAME', 'forge'),
+            'password' => env('MENUDIRECT_DB_PASSWORD', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+        ],
+
+        'sostech_clients' => [
+            'driver' => 'mysql',
+            'host' => env('SOSTECH_DB_HOST', '127.0.0.1'),
+            'port' => env('SOSTECH_DB_PORT', '3306'),
+            'database' => env('SOSTECH_DB_DATABASE', 'sos_portal'),
+            'username' => env('SOSTECH_DB_USERNAME', 'forge'),
+            'password' => env('SOSTECH_DB_PASSWORD', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+        ],
+
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),
