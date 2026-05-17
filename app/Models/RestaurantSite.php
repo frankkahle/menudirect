@@ -16,6 +16,13 @@ class RestaurantSite extends RestaurantModel
 
     use HasFactory, SoftDeletes;
 
+    protected static function booted(): void
+    {
+        static::addGlobalScope("notArchived", function ($query) {
+            $query->whereNull("archived_at");
+        });
+    }
+
     // Status constants
     const STATUS_DEMO = 'demo';
     const STATUS_ACTIVE = 'active';
