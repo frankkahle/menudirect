@@ -35,4 +35,20 @@ return [
         ],
     ],
 
+    // Self-call via Nginx catch-all — kept as HTTP for legacy SampleSiteController cached fetches
+    'portal' => [
+        'url' => env('PORTAL_API_URL', 'http://127.0.0.1'),
+    ],
+
+    // Bearer token shared with sos-tech.ca for inbound lead intake on /api/menudirect/leads
+    'menudirect' => [
+        'intake_token' => env('MENUDIRECT_INTAKE_TOKEN'),
+    ],
+
+    // Cloudflare Turnstile — defenses for public-facing forms
+    'turnstile' => [
+        'site_key' => env('TURNSTILE_SITE_KEY'),
+        'secret_key' => env('TURNSTILE_SECRET_KEY'),
+    ],
+
 ];
