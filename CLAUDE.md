@@ -163,12 +163,33 @@ After the spec's "post-cutover refactor" item is done, `mysql` and `menudirect` 
 
 Owners log in at `https://portal.menudirect.ca/login` with their portal-era email + password (bcrypt hash was copied from `sos_portal.clients` during seed-users).
 
-- **Frank** = `frank@sos-tech.ca`, `is_admin=true` — sees all sites, can manage any.
-- **Suwanna** = `donna.b.watkins@gmail.com`, `is_admin=false` — sees only her own restaurant.
-- **Tracey** = `Tracey@wecanhelp.ca`, demo owner.
+- **Frank** (id=1) = `frank@sos-tech.ca`, `is_admin=true` — sees all sites, can manage any.
+- **Suwanna / Donna** (id=54) = `donna.b.watkins@gmail.com`, owner of `suwanna-thai`.
+- **Bee Ty** (id=65) = `berenthamaety@gmail.com`, manager on `suwanna-thai` (Donna's daughter).
+- **Kim Rowe** (id=66) = `tiajarowe@yahoo.ca`, manager on `suwanna-thai` (Donna's restaurant manager).
+- **Tracey** (id=58) = `Tracey@wecanhelp.ca`, demo owner (burgers-at-busters + snows-soft-serve).
 - A test `demo-MXTJyUt3U95Y@demo.menudirect.ca` account exists.
 
-**Admin sees all sites** — replaces the portal-era client impersonation workflow. `RestaurantSitePolicy::manage` returns true if `$user->is_admin`. `RestaurantSiteController::index` shows all sites when admin; owner's-own when not.
+**Admin sees all sites** — replaces the portal-era client impersonation workflow. `RestaurantSitePolicy::manage` returns true if `$user->is_admin`. `RestaurantSiteController::index` shows all sites when admin; owner's + co-managed when not.
+
+### Multi-admin per restaurant (added 2026-05-18)
+
+`restaurant_site_user` pivot table — many-to-many between users and restaurant sites, with a `role` enum (`owner` / `manager`). Both roles get full management access today; the distinction is informational/audit-only.
+
+Relations:
+- `RestaurantSite::managers()` — `BelongsToMany(User::class, 'restaurant_site_user')->withPivot('role')`
+- `User::managedRestaurants()` — inverse
+- `User::ownedRestaurants()` — legacy `client_id` (HasMany)
+
+`RestaurantSitePolicy::manage` checks **three** paths in order:
+1. `$user->is_admin` → true
+2. Legacy `$site->client_id === $user->id` → true
+3. `$site->managers()->where('users.id', $user->id)->exists()` → true
+
+When adding a new restaurant team member: `php` shell or admin UI → create the User → insert pivot row with their role. Trigger `Password::sendResetLink([...email])` so they set their own password on first login (Mailcow handles delivery).
+
+Current multi-admin sites:
+- **suwanna-thai** (id=8) — Donna (owner), Bee Ty (manager), Kim Rowe (manager).
 
 **2FA is intentionally disabled** for all migrated users. Re-enabling would require either:
 - Copying portal's `APP_KEY` to this VM (security tradeoff: key in two places), OR
@@ -372,11 +393,15 @@ These bit us during the migration and could bite again — keep them in mind:
 
 - **Frank's uncommitted changes on the portal-host** repo are extensive (~70+ files modified, ~30+ untracked). When making changes there, commit only the specific files you touched — `git add` should be explicit, never `git add -A`.
 
+- **Stale migrations table entries** — some migrations were applied at cutover via direct SQL (e.g. `archived_at` column was on the imported `menudirect` dump but never tracked in this VM's `migrations` table). If `php artisan migrate` errors with "Column already exists" / "Table already exists," manually mark the migration as run: `INSERT IGNORE INTO migrations (migration, batch) VALUES ('<file_basename_without_ext>', 99);`. Tracked stale entries are in batch 99.
+
 ---
 
 ## Recent change history (most recent first)
 
 ```
+a98213d feat(rbac): multi-admin per restaurant via restaurant_site_user pivot
+d85eeae docs: comprehensive operational handoff for local Claude Code agent
 a9a04e3 feat(seo): auto cache-bust + IndexNow ping on restaurant lifecycle
 188510f fix(seo): menudirect.ca sitemap lists only menudirect.ca URLs
 c383e1e fix(seo): sitemap controllers cache the XML string not the Response object
