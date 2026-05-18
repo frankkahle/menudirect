@@ -23,9 +23,15 @@ class RestaurantSiteController extends Controller
      */
     public function index()
     {
-        $sites = RestaurantSite::where('client_id', auth()->id())
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = RestaurantSite::orderBy('created_at', 'desc');
+
+        // Admins see all sites (replaces portal-era client impersonation workflow).
+        // Owners see only their own.
+        if (!auth()->user()->is_admin) {
+            $query->where('client_id', auth()->id());
+        }
+
+        $sites = $query->get();
 
         return view('client.restaurant.index', compact('sites'));
     }
