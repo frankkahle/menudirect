@@ -187,6 +187,26 @@ Route::domain('portal.menudirect.ca')->prefix('client')->name('client.')->middle
         Route::post('/{site}/catering/{inquiry}/status', [\App\Http\Controllers\Client\RestaurantCateringController::class, 'updateStatus'])->name('catering.status');
         Route::post('/{site}/catering/{inquiry}/note', [\App\Http\Controllers\Client\RestaurantCateringController::class, 'addNote'])->name('catering.note');
 
+        // Delivery zones
+        Route::post('/{site}/delivery-zones', [\App\Http\Controllers\Client\DeliveryZoneController::class, 'store'])->name('delivery-zones.store');
+        Route::put('/{site}/delivery-zones/{zone}', [\App\Http\Controllers\Client\DeliveryZoneController::class, 'update'])->name('delivery-zones.update');
+        Route::delete('/{site}/delivery-zones/{zone}', [\App\Http\Controllers\Client\DeliveryZoneController::class, 'destroy'])->name('delivery-zones.destroy');
+
+        // Location management (multi-location support)
+        Route::get('/{site}/locations', [\App\Http\Controllers\Client\RestaurantSiteController::class, 'locations'])->name('locations');
+        Route::post('/{site}/locations/link', [\App\Http\Controllers\Client\RestaurantSiteController::class, 'linkLocation'])->name('locations.link');
+        Route::delete('/{site}/locations/{childSite}/unlink', [\App\Http\Controllers\Client\RestaurantSiteController::class, 'unlinkLocation'])->name('locations.unlink');
+        Route::post('/{site}/locations/{location}/primary', [\App\Http\Controllers\Client\RestaurantSiteController::class, 'setPrimaryLocation'])->name('locations.primary');
+
+        // Online Payments / Stripe Connect
+        Route::get('/{site}/payments', [\App\Http\Controllers\Client\RestaurantPaymentsController::class, 'show'])->name('payments.show');
+        Route::post('/{site}/payments/enable', [\App\Http\Controllers\Client\RestaurantPaymentsController::class, 'enable'])->name('payments.enable');
+        Route::post('/{site}/payments/disable', [\App\Http\Controllers\Client\RestaurantPaymentsController::class, 'disable'])->name('payments.disable');
+        Route::get('/{site}/payments/onboarding', [\App\Http\Controllers\Client\RestaurantPaymentsController::class, 'redirectToOnboarding'])->name('payments.onboarding');
+        Route::get('/{site}/payments/return', [\App\Http\Controllers\Client\RestaurantPaymentsController::class, 'return'])->name('payments.return');
+        Route::get('/{site}/payments/refresh', [\App\Http\Controllers\Client\RestaurantPaymentsController::class, 'refresh'])->name('payments.refresh');
+        Route::get('/{site}/payments/dashboard', [\App\Http\Controllers\Client\RestaurantPaymentsController::class, 'openDashboard'])->name('payments.dashboard');
+
         // Orders management
         Route::get('/{site}/orders', [\App\Http\Controllers\Client\RestaurantOrdersController::class, 'index'])->name('orders.index');
         Route::get('/{site}/orders/{order}', [\App\Http\Controllers\Client\RestaurantOrdersController::class, 'show'])->name('orders.show');
