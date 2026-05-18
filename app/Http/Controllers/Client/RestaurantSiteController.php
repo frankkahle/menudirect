@@ -23,12 +23,16 @@ class RestaurantSiteController extends Controller
      */
     public function index()
     {
+        $user = auth()->user();
         $query = RestaurantSite::orderBy('created_at', 'desc');
 
         // Admins see all sites (replaces portal-era client impersonation workflow).
-        // Owners see only their own.
-        if (!auth()->user()->is_admin) {
-            $query->where('client_id', auth()->id());
+        // Owners + co-managers (via restaurant_site_user pivot) see only their own.
+        if (!$user->is_admin) {
+            $query->where(function ($q) use ($user) {
+                $q->where('client_id', $user->id)
+                  ->orWhereHas('managers', fn ($m) => $m->where('users.id', $user->id));
+            });
         }
 
         $sites = $query->get();

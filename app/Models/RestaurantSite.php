@@ -1218,6 +1218,18 @@ class RestaurantSite extends RestaurantModel
     }
 
     /**
+     * Users (besides the legacy client_id owner) with full management access.
+     * The restaurant_site_user pivot lets multiple humans co-admin one restaurant
+     * (e.g. owner + manager + content editor — all currently treated as full access).
+     */
+    public function managers(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'restaurant_site_user')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /**
      * Parse the flat address string into structured components for schema.org
      */
     public function parseAddress(): array

@@ -27,6 +27,25 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
         ];
+    }
+
+    /**
+     * Restaurants this user co-manages via the restaurant_site_user pivot.
+     */
+    public function managedRestaurants(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(RestaurantSite::class, 'restaurant_site_user')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /**
+     * Restaurants this user owns (legacy client_id) — kept for backwards compat.
+     */
+    public function ownedRestaurants(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(RestaurantSite::class, 'client_id');
     }
 }
