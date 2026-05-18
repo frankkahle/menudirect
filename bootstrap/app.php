@@ -7,20 +7,24 @@ use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
-        health: '/up',
+        web: __DIR__."/../routes/web.php",
+        api: __DIR__."/../routes/api.php",
+        commands: __DIR__."/../routes/console.php",
+        health: "/up",
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // HAProxy terminates SSL upstream; trust its X-Forwarded-* headers
-        // so Laravel generates https:// URLs and sees the real client IP.
-        // '*' is safe here because Nginx (port 80) is only reachable via HAProxy.
-        $middleware->trustProxies(at: '*', headers:
+        // HAProxy terminates SSL upstream; trust its X-Forwarded-* headers.
+        $middleware->trustProxies(at: "*", headers:
             Request::HEADER_X_FORWARDED_FOR |
             Request::HEADER_X_FORWARDED_HOST |
             Request::HEADER_X_FORWARDED_PORT |
             Request::HEADER_X_FORWARDED_PROTO
         );
+
+        $middleware->alias([
+            "admin" => \App\Http\Middleware\AdminMiddleware::class,
+            "staff.auth" => \App\Http\Middleware\StaffAuth::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
