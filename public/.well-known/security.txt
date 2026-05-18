@@ -1,0 +1,10 @@
+Contact: mailto:support@sos-tech.ca
+Contact: tel:+15069105547
+Expires: 2027-05-18T00:00:00Z
+Encryption: https://sos-tech.ca/.well-known/security.txt
+Preferred-Languages: en
+Canonical: https://sos-tech.ca/.well-known/security.txt
+Policy: https://sos-tech.ca/security-policy
+# SOS Technical Services does not operate a paid bug bounty program.
+# We review reports case-by-case and may acknowledge researchers in writing.
+# Please share concrete findings (category + URL + PoC) with the contact above.

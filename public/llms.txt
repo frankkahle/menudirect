@@ -56,12 +56,12 @@ Live, paying customers and demo sites. Each has its own subdomain at {slug}.menu
 ## Templates / Designs (26 templates available)
 Bistro, Coastal, Urban, Noir, Pizzeria, Smokehouse, Pub, Neon, Sushi, Asian Fusion, Thai, Indian, Heritage, Farmhouse, Mediterranean, Cantina, Caribbean, Diner, Seafood, Elegant, Counter, Classic Restaurant — among others. Each is mobile-first, SEO-optimized, and uses Schema.org Restaurant structured data.
 
-## Technology
-- Laravel 13 + PHP 8.3 (dedicated VM at 192.168.23.65 LAN)
-- MySQL 8 (local, no cross-host)
-- Redis (sessions, cache, queue)
-- HAProxy upstream for SSL termination (Cloudflare in front)
+## Reliability & Security
+- Dedicated infrastructure (not shared with other tenants)
+- HTTPS-only with HSTS preload, modern security headers, strict CSP
+- Cloudflare in front for DDoS mitigation
 - Multi-layer form spam defense: honeypot + time-check + rate limit + content filter + Cloudflare Turnstile
+- Canadian data residency
 
 ## Schema / Structured Data
 Every restaurant page emits Schema.org Restaurant JSON-LD including:
