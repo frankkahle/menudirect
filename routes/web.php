@@ -29,16 +29,9 @@ Route::domain('www.menudirect.ca')->group(function () {
 });
 
 // --------------------------------------------------------------------
-// Restaurant subdomains — {slug}.menudirect.ca (excludes 'portal' and 'www')
-// --------------------------------------------------------------------
-Route::domain('{slug}.menudirect.ca')->group(function () {
-    Route::get('/', [\App\Http\Controllers\SampleSiteController::class, 'show']);
-    Route::get('/{path}', [\App\Http\Controllers\SampleSiteController::class, 'show'])
-        ->where('path', '.*');
-});
-
-// --------------------------------------------------------------------
 // Owner portal — portal.menudirect.ca only (auth, restaurant management)
+// (defined BEFORE {slug}.menudirect.ca so the {slug} wildcard doesn't
+//  swallow "portal" as a slug match)
 // --------------------------------------------------------------------
 Route::domain('portal.menudirect.ca')->group(function () {
 
@@ -236,6 +229,18 @@ Route::domain('portal.menudirect.ca')->prefix('admin')->name('admin.')->middlewa
     Route::get('/leads/{lead}/edit', [\App\Http\Controllers\Admin\RestaurantLeadsController::class, 'edit'])->name('leads.edit');
     Route::put('/leads/{lead}', [\App\Http\Controllers\Admin\RestaurantLeadsController::class, 'update'])->name('leads.update');
     Route::delete('/leads/{lead}', [\App\Http\Controllers\Admin\RestaurantLeadsController::class, 'destroy'])->name('leads.destroy');
+});
+
+// --------------------------------------------------------------------
+// Restaurant subdomains — {slug}.menudirect.ca
+//
+// Placed AFTER all portal.menudirect.ca groups so the {slug} wildcard
+// doesn't grab "portal" first.
+// --------------------------------------------------------------------
+Route::domain('{slug}.menudirect.ca')->group(function () {
+    Route::get('/', [\App\Http\Controllers\SampleSiteController::class, 'show']);
+    Route::get('/{path}', [\App\Http\Controllers\SampleSiteController::class, 'show'])
+        ->where('path', '.*');
 });
 
 // --------------------------------------------------------------------
