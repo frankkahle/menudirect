@@ -16,15 +16,16 @@ class SitemapController extends Controller
      */
     public function index(): Response
     {
-        return Cache::remember('sitemap.index', 3600, function () {
+        $xml = Cache::remember('sitemap.index.xml', 3600, function () {
             $now = now()->toAtomString();
             $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
             $xml .= '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
             $xml .= "  <sitemap>\n    <loc>https://menudirect.ca/sitemap-marketing.xml</loc>\n    <lastmod>{$now}</lastmod>\n  </sitemap>\n";
             $xml .= "  <sitemap>\n    <loc>https://menudirect.ca/sitemap-restaurants.xml</loc>\n    <lastmod>{$now}</lastmod>\n  </sitemap>\n";
             $xml .= '</sitemapindex>' . "\n";
-            return response($xml, 200)->header('Content-Type', 'application/xml; charset=utf-8');
+            return $xml;
         });
+        return response($xml, 200)->header('Content-Type', 'application/xml; charset=utf-8');
     }
 
     /**
@@ -51,7 +52,7 @@ class SitemapController extends Controller
      */
     public function restaurants(): Response
     {
-        return Cache::remember('sitemap.restaurants', 600, function () {
+        $xml = Cache::remember('sitemap.restaurants.xml', 600, function () {
             $now = now()->toAtomString();
             $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
             $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
@@ -73,8 +74,9 @@ class SitemapController extends Controller
                 }
             }
             $xml .= '</urlset>' . "\n";
-            return response($xml, 200)->header('Content-Type', 'application/xml; charset=utf-8');
+            return $xml;
         });
+        return response($xml, 200)->header('Content-Type', 'application/xml; charset=utf-8');
     }
 
     /**
@@ -83,20 +85,28 @@ class SitemapController extends Controller
      */
     public function bySlug(string $slug): Response
     {
-        $site = Cache::remember("sitemap.site.{$slug}", 600, fn () => RestaurantSite::where('slug', $slug)
-            ->whereIn('status', [RestaurantSite::STATUS_ACTIVE, RestaurantSite::STATUS_DEMO])
-            ->first());
+        // Don't cache Eloquent models (they don't serialize cleanly to Redis/file cache).
+        // Cache only the rendered XML string.
+        $xml = Cache::remember("sitemap.site.{$slug}.xml", 600, function () use ($slug) {
+            $site = RestaurantSite::where('slug', $slug)
+                ->whereIn('status', [RestaurantSite::STATUS_ACTIVE, RestaurantSite::STATUS_DEMO])
+                ->first();
+            if (!$site) {
+                return null;
+            }
+            $now = now()->toAtomString();
+            $base = rtrim($site->getPublicUrl(), '/');
+            $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+            $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+            $xml .= "  <url>\n    <loc>{$base}/</loc>\n    <lastmod>{$now}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>1.0</priority>\n  </url>\n";
+            $xml .= '</urlset>' . "\n";
+            return $xml;
+        });
 
-        if (!$site) {
+        if ($xml === null) {
             abort(404);
         }
 
-        $now = now()->toAtomString();
-        $base = rtrim($site->getPublicUrl(), '/');
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
-        $xml .= "  <url>\n    <loc>{$base}/</loc>\n    <lastmod>{$now}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>1.0</priority>\n  </url>\n";
-        $xml .= '</urlset>' . "\n";
         return response($xml, 200)->header('Content-Type', 'application/xml; charset=utf-8');
     }
 
