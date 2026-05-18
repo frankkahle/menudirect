@@ -49,7 +49,7 @@
         @endif
 
         <div class="mt-12 text-center text-sm text-gray-500">
-            <p>URLs: <code class="bg-gray-200 px-2 py-1 rounded">sos-tech.ca/s/{slug}</code></p>
+            <p>URLs: <code class="bg-gray-200 px-2 py-1 rounded">{slug}.menudirect.ca</code></p>
         </div>
     </div>
 </body>

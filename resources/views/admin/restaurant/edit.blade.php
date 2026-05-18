@@ -55,7 +55,7 @@
                 </label>
                 <div class="flex">
                     <span class="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                        sos-tech.ca/s/
+                        .menudirect.ca
                     </span>
                     <input type="text" name="slug" id="slug" value="{{ old('slug', $site->slug) }}"
                         class="flex-1 px-3 py-2 border border-gray-300 rounded-r-lg focus:ring-indigo-500 focus:border-indigo-500" required>

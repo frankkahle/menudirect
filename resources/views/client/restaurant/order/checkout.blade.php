@@ -28,7 +28,7 @@
                                 <span class="text-sm text-gray-500">{{ $plan->name }} Plan</span>
                             </div>
                             <div class="text-sm text-gray-600">
-                                <p>URL: <a href="https://sos-tech.ca/s/{{ $orderDetails['slug'] }}" target="_blank" class="text-indigo-600 hover:underline">sos-tech.ca/s/{{ $orderDetails['slug'] }}</a></p>
+                                <p>URL: <a href="https://{{ $orderDetails['slug'] }}.menudirect.ca" target="_blank" class="text-indigo-600 hover:underline">{{ $orderDetails['slug'] }}.menudirect.ca</a></p>
                                 @if(!empty($orderDetails['domain_name']))
                                 <p class="mt-1">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">

@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Models\RestaurantModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class RestaurantCustomDomain extends Model
+class RestaurantCustomDomain extends RestaurantModel
 {
 
     protected $fillable = [

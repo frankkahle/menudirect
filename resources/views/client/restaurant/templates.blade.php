@@ -59,7 +59,7 @@
                     @endif
 
                     {{-- Preview link overlay --}}
-                    <a href="https://sos-tech.ca/template-preview/{{ $tpl['slug'] }}" target="_blank"
+                    <a href="https://menudirect.ca/template-preview/{{ $tpl['slug'] }}" target="_blank"
                        class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
                         <span class="bg-white text-gray-900 px-3 py-1.5 rounded-lg text-sm font-medium shadow">Preview</span>
                     </a>

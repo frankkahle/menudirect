@@ -473,7 +473,7 @@ class FoodOrder extends RestaurantModel
      */
     public function getTrackingUrl(): string
     {
-        $baseUrl = config('services.sostech.url', 'https://sos-tech.ca');
+        $baseUrl = config('app.url', 'https://portal.menudirect.ca');
         return $baseUrl . '/order/' . $this->token;
     }
 

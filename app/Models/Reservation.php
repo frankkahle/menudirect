@@ -254,7 +254,7 @@ class Reservation extends RestaurantModel
      */
     public function getStatusUrl(): string
     {
-        $baseUrl = config('services.sostech.url', 'https://sos-tech.ca');
+        $baseUrl = config('app.url', 'https://portal.menudirect.ca');
         return $baseUrl . '/reservation/' . $this->token;
     }
 }

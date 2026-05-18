@@ -51,7 +51,7 @@
                 </label>
                 <div class="flex rounded-md shadow-sm">
                     <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                        sos-tech.ca/s/
+                        .menudirect.ca
                     </span>
                     <input type="text" name="slug" id="slug" required
                         class="flex-1 min-w-0 block w-full rounded-none rounded-r-md border-gray-300 focus:border-orange-500 focus:ring-orange-500"
@@ -107,7 +107,7 @@
                 <div id="domain-section" class="{{ old('want_domain') ? '' : 'hidden' }}">
                     <div class="bg-blue-50 rounded-lg p-4 mb-4">
                         <p class="text-sm text-blue-800">
-                            <strong>Why get a custom domain?</strong> Instead of <code>sos-tech.ca/s/your-restaurant</code>,
+                            <strong>Why get a custom domain?</strong> Instead of <code>your-restaurant.menudirect.ca
                             your customers can visit <code>yourrestaurant.ca</code> directly. Professional and easy to remember!
                         </p>
                     </div>

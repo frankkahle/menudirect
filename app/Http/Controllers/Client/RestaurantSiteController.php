@@ -683,17 +683,9 @@ class RestaurantSiteController extends Controller
         $site->settings = $settings;
         $site->save();
 
-        // Clear sos-tech cache so the change takes effect immediately
-        try {
-            $secret = config('services.sostech.cache_clear_secret');
-            if ($secret) {
-                \Illuminate\Support\Facades\Http::post(config('services.sostech.url') . '/api/cache-clear', [
-                    'secret' => $secret,
-                ]);
-            }
-        } catch (\Exception $e) {
-            // Non-critical — cache will expire on its own
-        }
+        // Post-cutover: the public-site renderer is on this same VM, so the
+        // cache-clear is a local cache::forget on this app, not a cross-host call.
+        \Illuminate\Support\Facades\Cache::forget("restaurant_site:{$site->slug}");
 
         $allTemplates = config('restaurant_templates', []);
         $templateName = $allTemplates[$data['template']]['name'] ?? $data['template'];

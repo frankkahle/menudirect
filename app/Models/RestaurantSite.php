@@ -364,7 +364,15 @@ class RestaurantSite extends RestaurantModel
 
     public function getPublicUrl(): string
     {
-        return config('services.sostech.url', 'https://sos-tech.ca') . '/s/' . $this->slug;
+        // Custom domain wins if configured; otherwise restaurants live at slug.menudirect.ca
+        if ($this->custom_domain) {
+            return 'https://' . $this->custom_domain;
+        }
+        $primary = $this->customDomains()->where('is_primary', true)->where('status', 'active')->value('domain');
+        if ($primary) {
+            return 'https://' . $primary;
+        }
+        return 'https://' . $this->slug . '.menudirect.ca';
     }
 
     public function getColors(): array
