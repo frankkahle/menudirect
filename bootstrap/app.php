@@ -25,11 +25,6 @@ return Application::configure(basePath: dirname(__DIR__))
             "admin" => \App\Http\Middleware\AdminMiddleware::class,
             "staff.auth" => \App\Http\Middleware\StaffAuth::class,
         ]);
-
-        // Modern security headers on every response (CSP / Referrer-Policy / Permissions-Policy / COOP / CORP)
-        $middleware->web(append: [
-            \App\Http\Middleware\SecurityHeaders::class,
-        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
