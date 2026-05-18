@@ -1,6 +1,5 @@
-# MenuDirect — restaurant SaaS at menudirect.ca
-# AI training crawlers are explicitly permitted. We want our restaurants discoverable
-# in AI search and recommendation systems (ChatGPT, Claude, Perplexity, Google AI Overviews, etc.)
+# Restaurant: {{ $slug }}.menudirect.ca
+# AI bots explicitly allowed — restaurants want to be discoverable in AI search.
 
 User-agent: *
 Allow: /
@@ -29,4 +28,4 @@ Allow: /
 User-agent: Applebot-Extended
 Allow: /
 
-Sitemap: https://menudirect.ca/sitemap.xml
+Sitemap: https://{{ $slug }}.menudirect.ca/sitemap.xml

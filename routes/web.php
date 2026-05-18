@@ -16,6 +16,12 @@ Route::domain('menudirect.ca')->group(function () {
     Route::post('/try-demo', [\App\Http\Controllers\MenuDirectController::class, 'createDemo'])
         ->middleware('throttle:10,1')
         ->name('menudirect.create-demo');
+
+    // SEO / sitemaps / discovery files at apex
+    Route::get('/sitemap.xml',             [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap.index');
+    Route::get('/sitemap-marketing.xml',   [\App\Http\Controllers\SitemapController::class, 'marketing'])->name('sitemap.marketing');
+    Route::get('/sitemap-restaurants.xml', [\App\Http\Controllers\SitemapController::class, 'restaurants'])->name('sitemap.restaurants');
+    // Note: /api/indexnow/submit lives in routes/api.php (no CSRF; throttle:5,1)
 });
 
 // Redirect www.menudirect.ca → apex
@@ -259,6 +265,15 @@ Route::domain('portal.menudirect.ca')->prefix('admin')->name('admin.')->middlewa
 // doesn't grab "portal" first.
 // --------------------------------------------------------------------
 Route::domain('{slug}.menudirect.ca')->group(function () {
+    // Per-subdomain SEO / discovery files (must come BEFORE the generic /{path} catch-all)
+    Route::get('/sitemap.xml', function (string $slug) {
+        return app(\App\Http\Controllers\SitemapController::class)->bySlug($slug);
+    });
+    Route::get('/robots.txt', function (string $slug) {
+        return response(view('seo.robots-restaurant', ['slug' => $slug])->render(), 200)
+            ->header('Content-Type', 'text/plain; charset=utf-8');
+    });
+
     Route::get('/', [\App\Http\Controllers\SampleSiteController::class, 'show']);
     Route::get('/{path}', [\App\Http\Controllers\SampleSiteController::class, 'show'])
         ->where('path', '.*');

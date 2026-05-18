@@ -55,4 +55,9 @@ return [
         'secret_key' => env('TURNSTILE_SECRET_KEY'),
     ],
 
+    // IndexNow — ping Bing/Yandex when URLs change
+    'indexnow' => [
+        'key' => env('INDEXNOW_KEY'),
+    ],
+
 ];

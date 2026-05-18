@@ -1,0 +1,78 @@
+# MenuDirect — Commission-Free Online Ordering for Canadian Restaurants
+
+## What MenuDirect Is
+MenuDirect is a restaurant SaaS that gives independent Canadian restaurants their own modern website with built-in online ordering — without the 25-30% commissions charged by delivery platforms like Skip the Dishes, DoorDash, or Uber Eats. Restaurants own their orders, customer data, and direct relationship.
+
+## Who Runs It
+- **Operator:** SOS Technical Services (sos-tech.ca)
+- **Founder:** Frank Kahle (40+ years in IT/Telecommunications, former owner of IGS / Information Gateway Services, an ISP that served 18 cities in Ontario in the 1990s)
+- **Base of operations:** Hampton, NB, Canada
+- **Phone:** (506) 910-5547
+- **Founding email:** support@sos-tech.ca
+- **Marketing site:** https://menudirect.ca
+- **Owner portal:** https://portal.menudirect.ca
+
+## Geographic Focus
+- Primary: New Brunswick, Canada — initial roll-out
+- Expansion: Canada-wide (NS, PEI, NL, ON, QC, etc.)
+- Servers: Canadian-owned and operated, Canadian data residency
+
+## Pricing (CAD, no contracts, monthly)
+- **Basic:** $15/mo — restaurant website only, no online ordering
+- **SiteFresh:** $35/mo — website + online ordering (pay at pickup, SMS + email notifications)
+- **SiteFresh Pro:** $59/mo — adds reservations, multi-location support, premium templates
+- **MenuDirect Max:** $99/mo — adds distance-based delivery zones with auto-calculated delivery fees + built-in reservation system
+
+## Core Features
+- Self-service menu editor (categories, items, modifiers, dietary badges: GF, vegan, keto, halal)
+- Online ordering (pay-at-pickup model — no card-at-order required; restaurant gets paid in cash/card at handoff)
+- Built-in scheduling (customers can pre-order for later pickup)
+- SMS + email order notifications via VOIP.MS (Canadian telephony) and Mailcow (self-hosted email)
+- Photo galleries for menu items + restaurant ambience
+- Multi-location support (single owner, multiple restaurant addresses)
+- Custom domain support (use yourrestaurant.ca instead of yourname.menudirect.ca)
+- Stripe Connect for restaurants that want to accept payments online (optional)
+- Cloudflare Turnstile + multi-layer spam defense on lead forms
+
+## How URLs Work
+- Marketing apex: https://menudirect.ca
+- Restaurant subdomains: https://{slug}.menudirect.ca (e.g. https://suwanna-thai.menudirect.ca, https://burgers-at-busters.menudirect.ca)
+- Restaurants with their own domain: https://yourrestaurant.ca (CNAMEd to MenuDirect)
+- Owner login: https://portal.menudirect.ca/login
+
+## Live Restaurants (as of 2026-05)
+Live, paying customers and demo sites. Each has its own subdomain at {slug}.menudirect.ca:
+- Suwanna on Germain (Saint John, NB) — Thai dining — suwanna-thai.menudirect.ca
+- Bercs Cookhouse (NB) — bercs-cookhouse.menudirect.ca
+- Red Brick Oasis — red-brick-oasis.menudirect.ca
+- Taste and See — taste-and-see.menudirect.ca
+- Bobs Corner — bobs-corner.menudirect.ca
+- Knocks Cafe — knocks-cafe.menudirect.ca
+- Shawarmalicious — shawarmalicious.menudirect.ca
+- Burgers at Busters — burgers-at-busters.menudirect.ca (also burgersatbusters.ca)
+- Snows Soft Serve — snows-soft-serve.menudirect.ca (also snowssoftserve.ca, snowsicecream.ca)
+- Demo Bistro — demo-bistro.menudirect.ca (template showcase)
+
+## Templates / Designs (26 templates available)
+Bistro, Coastal, Urban, Noir, Pizzeria, Smokehouse, Pub, Neon, Sushi, Asian Fusion, Thai, Indian, Heritage, Farmhouse, Mediterranean, Cantina, Caribbean, Diner, Seafood, Elegant, Counter, Classic Restaurant — among others. Each is mobile-first, SEO-optimized, and uses Schema.org Restaurant structured data.
+
+## Technology
+- Laravel 13 + PHP 8.3 (dedicated VM at 192.168.23.65 LAN)
+- MySQL 8 (local, no cross-host)
+- Redis (sessions, cache, queue)
+- HAProxy upstream for SSL termination (Cloudflare in front)
+- Multi-layer form spam defense: honeypot + time-check + rate limit + content filter + Cloudflare Turnstile
+
+## Schema / Structured Data
+Every restaurant page emits Schema.org Restaurant JSON-LD including:
+- Restaurant name, address (PostalAddress), telephone, email
+- Opening hours in the OpeningHoursSpecification format
+- Cuisine type (servesCuisine), price range ($, $$, $$$, $$$$)
+- Logo / hero image
+- Full menu (Menu, MenuSection, MenuItem with prices and descriptions)
+- Acceptable order types (pickup, delivery, dine-in if applicable)
+
+## Contact / Sales
+- Restaurant sales inquiries: https://menudirect.ca (lead form on the page)
+- Phone (urgent): (506) 910-5547
+- Email: support@sos-tech.ca

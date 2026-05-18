@@ -17,6 +17,14 @@ Route::post('/menudirect/leads', [\App\Http\Controllers\Api\MenudirectLeadContro
     ->name('api.menudirect.leads.store');
 
 // --------------------------------------------------------------------
+// IndexNow notification — POST triggers re-crawl of all known URLs at Bing/Yandex
+// Idempotent and harmless (just nudges search engines), so rate-limited but not auth-gated.
+// --------------------------------------------------------------------
+Route::post('/indexnow/submit', [\App\Http\Controllers\SitemapController::class, 'submitIndexNow'])
+    ->middleware('throttle:5,1')
+    ->name('api.indexnow.submit');
+
+// --------------------------------------------------------------------
 // Stripe webhook relay (Manager validates Stripe signature, forwards here)
 // --------------------------------------------------------------------
 Route::post('/webhooks/stripe-account-updated', [\App\Http\Controllers\Api\StripeWebhookRelayController::class, 'accountUpdated'])
