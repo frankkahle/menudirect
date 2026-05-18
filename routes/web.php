@@ -41,7 +41,7 @@ Route::domain('portal.menudirect.ca')->group(function () {
 
     Route::middleware('guest')->group(function () {
         Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'show'])->name('login');
-        Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login']);
+        Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login.post');
         Route::get('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'requestForm'])->name('password.request');
         Route::post('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'email'])->name('password.email');
         Route::get('/reset-password/{token}', [\App\Http\Controllers\Auth\PasswordResetController::class, 'resetForm'])->name('password.reset');
