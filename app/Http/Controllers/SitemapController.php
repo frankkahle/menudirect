@@ -63,15 +63,13 @@ class SitemapController extends Controller
                 ->with('customDomains')
                 ->get();
 
+            // A sitemap hosted at menudirect.ca may only list menudirect.ca URLs (sitemaps.org spec).
+            // Custom-domain restaurants still get indexed: the rendered page emits
+            // <link rel="canonical" href="{custom_domain}"> so Google indexes the custom-domain URL
+            // even though it discovered the page via the menudirect.ca subdomain.
             foreach ($sites as $site) {
-                $url = htmlspecialchars($site->getPublicUrl(), ENT_XML1);
-                $xml .= "  <url>\n    <loc>{$url}</loc>\n    <lastmod>{$now}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n";
-
-                // Also list the subdomain URL even if custom_domain exists — Google can canonicalize
-                if ($site->custom_domain || $site->customDomains->isNotEmpty()) {
-                    $subUrl = htmlspecialchars("https://{$site->slug}.menudirect.ca", ENT_XML1);
-                    $xml .= "  <url>\n    <loc>{$subUrl}</loc>\n    <lastmod>{$now}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.6</priority>\n  </url>\n";
-                }
+                $subUrl = htmlspecialchars("https://{$site->slug}.menudirect.ca", ENT_XML1);
+                $xml .= "  <url>\n    <loc>{$subUrl}</loc>\n    <lastmod>{$now}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n";
             }
             $xml .= '</urlset>' . "\n";
             return $xml;
