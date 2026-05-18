@@ -21,6 +21,9 @@ class RestaurantSite extends RestaurantModel
         static::addGlobalScope("notArchived", function ($query) {
             $query->whereNull("archived_at");
         });
+
+        // Auto-SEO: cache-bust sitemap + ping IndexNow on lifecycle events.
+        static::observe(\App\Observers\RestaurantSiteObserver::class);
     }
 
     // Status constants
