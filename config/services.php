@@ -36,8 +36,12 @@ return [
     ],
 
     // Self-call via Nginx catch-all — kept as HTTP for legacy SampleSiteController cached fetches
+    // Both keys read the same MENUDIRECT_INTAKE_TOKEN env: services.portal.menudirect_intake_token
+    // matches what MenuDirectController (ported from sos-tech) reads; services.menudirect.intake_token
+    // matches what MenudirectLeadController API endpoint reads. Same secret, two config paths.
     'portal' => [
         'url' => env('PORTAL_API_URL', 'http://127.0.0.1'),
+        'menudirect_intake_token' => env('MENUDIRECT_INTAKE_TOKEN'),
     ],
 
     // Bearer token shared with sos-tech.ca for inbound lead intake on /api/menudirect/leads
