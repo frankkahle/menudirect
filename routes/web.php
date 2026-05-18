@@ -51,7 +51,7 @@ Route::domain('portal.menudirect.ca')->group(function () {
     Route::middleware('auth')->group(function () {
         Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
         Route::get('/two-factor-challenge', [\App\Http\Controllers\Auth\LoginController::class, 'showTwoFactorChallenge'])->name('two-factor.challenge');
-        Route::post('/two-factor-challenge', [\App\Http\Controllers\Auth\LoginController::class, 'verifyTwoFactorChallenge']);
+        Route::post('/two-factor-challenge', [\App\Http\Controllers\Auth\LoginController::class, 'verifyTwoFactorChallenge'])->name('two-factor.verify');
     });
 
     // Public tracking pages (no auth)
