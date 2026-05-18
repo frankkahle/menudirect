@@ -98,7 +98,8 @@ Route::prefix('staff')->name('staff.')->group(function () {
 // --------------------------------------------------------------------
 Route::domain('portal.menudirect.ca')->prefix('client')->name('client.')->middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
-        return view('client.dashboard');
+        // No dedicated dashboard yet — owners land directly on their restaurant listing.
+        return redirect()->route('client.restaurant.index');
     })->name('dashboard');
 
     Route::prefix('restaurant')->name('restaurant.')->group(function () {

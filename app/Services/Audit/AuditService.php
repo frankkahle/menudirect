@@ -3,7 +3,7 @@
 namespace App\Services\Audit;
 
 use App\Models\AuditLog;
-use App\Models\Client;
+use App\Models\User as Client;
 use App\Models\User;
 use App\Models\Domain;
 use Illuminate\Http\Request;
