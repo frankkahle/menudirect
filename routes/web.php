@@ -3,27 +3,67 @@
 use Illuminate\Support\Facades\Route;
 
 // --------------------------------------------------------------------
-// Auth scaffold (Laravel default)
+// Marketing apex — menudirect.ca
 // --------------------------------------------------------------------
-Route::get('/', function () {
-    // The marketing apex (menudirect.ca) is wired in Phase C.
-    // For now, hitting the root of any non-restaurant-subdomain host returns this.
-    return redirect()->route('login');
+Route::domain('menudirect.ca')->group(function () {
+    Route::get('/', function () {
+        return view('menudirect.landing');
+    })->name('menudirect.home');
+
+    Route::post('/lead', [\App\Http\Controllers\MenuDirectController::class, 'submitLead'])
+        ->name('menudirect.lead');
+
+    Route::post('/try-demo', [\App\Http\Controllers\MenuDirectController::class, 'createDemo'])
+        ->middleware('throttle:10,1')
+        ->name('menudirect.create-demo');
 });
 
-Route::middleware('guest')->group(function () {
-    Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'show'])->name('login');
-    Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login']);
-    Route::get('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'requestForm'])->name('password.request');
-    Route::post('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'email'])->name('password.email');
-    Route::get('/reset-password/{token}', [\App\Http\Controllers\Auth\PasswordResetController::class, 'resetForm'])->name('password.reset');
-    Route::post('/reset-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'update'])->name('password.update');
+// Redirect www.menudirect.ca → apex
+Route::domain('www.menudirect.ca')->group(function () {
+    Route::get('/', function () {
+        return redirect('https://menudirect.ca', 301);
+    });
+    Route::get('/{any}', function () {
+        return redirect('https://menudirect.ca', 301);
+    })->where('any', '.*');
 });
 
-Route::middleware('auth')->group(function () {
-    Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
-    Route::get('/two-factor-challenge', [\App\Http\Controllers\Auth\LoginController::class, 'showTwoFactorChallenge'])->name('two-factor.challenge');
-    Route::post('/two-factor-challenge', [\App\Http\Controllers\Auth\LoginController::class, 'verifyTwoFactorChallenge']);
+// --------------------------------------------------------------------
+// Restaurant subdomains — {slug}.menudirect.ca (excludes 'portal' and 'www')
+// --------------------------------------------------------------------
+Route::domain('{slug}.menudirect.ca')->group(function () {
+    Route::get('/', [\App\Http\Controllers\SampleSiteController::class, 'show']);
+    Route::get('/{path}', [\App\Http\Controllers\SampleSiteController::class, 'show'])
+        ->where('path', '.*');
+});
+
+// --------------------------------------------------------------------
+// Owner portal — portal.menudirect.ca only (auth, restaurant management)
+// --------------------------------------------------------------------
+Route::domain('portal.menudirect.ca')->group(function () {
+
+    Route::get('/', function () {
+        return redirect()->route('login');
+    });
+
+    Route::middleware('guest')->group(function () {
+        Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'show'])->name('login');
+        Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login']);
+        Route::get('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'requestForm'])->name('password.request');
+        Route::post('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'email'])->name('password.email');
+        Route::get('/reset-password/{token}', [\App\Http\Controllers\Auth\PasswordResetController::class, 'resetForm'])->name('password.reset');
+        Route::post('/reset-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'update'])->name('password.update');
+    });
+
+    Route::middleware('auth')->group(function () {
+        Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+        Route::get('/two-factor-challenge', [\App\Http\Controllers\Auth\LoginController::class, 'showTwoFactorChallenge'])->name('two-factor.challenge');
+        Route::post('/two-factor-challenge', [\App\Http\Controllers\Auth\LoginController::class, 'verifyTwoFactorChallenge']);
+    });
+
+    // Public tracking pages (no auth)
+    Route::get('/order/{token}', [\App\Http\Controllers\SampleSiteController::class, 'trackOrder'])->name('order.track');
+    Route::get('/reservation/{token}', [\App\Http\Controllers\SampleSiteController::class, 'reservationStatus'])->name('reservation.status');
 });
 
 // --------------------------------------------------------------------
@@ -61,9 +101,9 @@ Route::prefix('staff')->name('staff.')->group(function () {
 });
 
 // --------------------------------------------------------------------
-// Owner portal (restaurant owner login)
+// Owner portal — under portal.menudirect.ca, prefix /client
 // --------------------------------------------------------------------
-Route::prefix('client')->name('client.')->middleware('auth')->group(function () {
+Route::domain('portal.menudirect.ca')->prefix('client')->name('client.')->middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return view('client.dashboard');
     })->name('dashboard');
@@ -173,9 +213,9 @@ Route::prefix('client')->name('client.')->middleware('auth')->group(function () 
 });
 
 // --------------------------------------------------------------------
-// Admin (MenuDirect-only admin — Frank)
+// Admin (MenuDirect-only admin — Frank) — portal.menudirect.ca, prefix /admin
 // --------------------------------------------------------------------
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+Route::domain('portal.menudirect.ca')->prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     // Restaurant sites
     Route::get('/restaurant', [\App\Http\Controllers\Admin\RestaurantSitesController::class, 'index'])->name('restaurant.index');
     Route::get('/restaurant/create', [\App\Http\Controllers\Admin\RestaurantSitesController::class, 'create'])->name('restaurant.create');
@@ -199,6 +239,26 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 });
 
 // --------------------------------------------------------------------
-// Public order / reservation token-based tracking pages
-// (Wired in Phase C alongside public restaurant site rendering.)
+// Template preview (admin/marketing use)
 // --------------------------------------------------------------------
+Route::get('/template-preview/{template}', [\App\Http\Controllers\SampleSiteController::class, 'templatePreview'])
+    ->name('template.preview');
+
+// --------------------------------------------------------------------
+// Custom domain fallback — any host not matched above resolves to a
+// restaurant site via its custom_domain column.
+// --------------------------------------------------------------------
+Route::fallback(function (\Illuminate\Http\Request $request) {
+    $host = strtolower($request->getHost());
+
+    // Skip our own hostnames — they should be matched by the domain-scoped routes above.
+    $known = ['menudirect.ca', 'www.menudirect.ca', 'portal.menudirect.ca', 'localhost', '127.0.0.1', '192.168.23.65'];
+    if (in_array($host, $known) || str_ends_with($host, '.menudirect.ca')) {
+        abort(404);
+    }
+
+    $controller = app(\App\Http\Controllers\SampleSiteController::class);
+    $path = $request->path() === '/' ? null : $request->path();
+
+    return $controller->showByDomain($request, $path);
+});
