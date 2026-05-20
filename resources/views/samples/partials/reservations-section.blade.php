@@ -8,7 +8,7 @@
         @if(($site['reservations']['type'] ?? 'email') === 'built_in')
         {{-- Built-in Reservation Widget --}}
         <div x-data="reservationWidget({
-            apiBaseUrl: '{{ config('services.portal.url', 'https://portal.sos-tech.ca') }}',
+            apiBaseUrl: '',
             restaurantSlug: '{{ $site['slug'] }}',
             maxPartySize: {{ intval($site['reservations']['max_party_size'] ?? 10) }},
             primaryColor: '{{ $site['colors']['primary'] ?? '#1f2937' }}'

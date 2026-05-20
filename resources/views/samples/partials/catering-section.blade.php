@@ -187,7 +187,7 @@ function cateringInquiry() {
             if (payload.guest_count) payload.guest_count = parseInt(payload.guest_count);
 
             try {
-                const response = await fetch('{{ config("services.sostech.portal_api_url", "https://portal.sos-tech.ca") }}/api/restaurant/{{ $site["slug"] }}/catering/inquiries', {
+                const response = await fetch('/api/restaurant/{{ $site["slug"] }}/catering/inquiries', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     body: JSON.stringify(payload),

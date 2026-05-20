@@ -103,7 +103,7 @@
                     <p class="text-sm text-gray-600 mb-4">Need to cancel? Please let us know as soon as possible.</p>
                     <button @click="if(confirm('Are you sure you want to cancel this reservation?')) {
                         cancelling = true;
-                        fetch('{{ config('services.portal.url', 'https://portal.sos-tech.ca') }}/api/reservations/{{ $token }}/cancel', {
+                        fetch('/api/reservations/{{ $token }}/cancel', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
                         })

@@ -252,12 +252,12 @@
 @if(($site['status'] ?? '') === 'demo')
 {{-- Demo buttons — kitchen view + server tablet --}}
 <div class="fixed top-4 right-4 z-50 flex gap-2">
-    <a href="#" onclick="window.open('https://portal.sos-tech.ca/demo-kitchen/{{ $site['slug'] }}/server', 'server', 'width=900,height=650,left=' + (screen.width - 940) + ',top=60,toolbar=no,menubar=no,location=no,status=no'); return false;"
+    <a href="#" onclick="window.open('/demo-kitchen/{{ $site['slug'] }}/server', 'server', 'width=900,height=650,left=' + (screen.width - 940) + ',top=60,toolbar=no,menubar=no,location=no,status=no'); return false;"
        class="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-amber-400 border border-amber-500/30 px-3 py-2 rounded-lg shadow-lg transition text-sm font-medium">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
         <span class="hidden sm:inline">Server Tablet</span>
     </a>
-    <a href="https://portal.sos-tech.ca/demo-kitchen/{{ $site['slug'] }}" target="kitchen"
+    <a href="/demo-kitchen/{{ $site['slug'] }}" target="kitchen"
        class="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-gray-400 border border-white/10 px-3 py-2 rounded-lg shadow-lg transition text-sm font-medium">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
         <span class="hidden sm:inline">Kitchen</span>

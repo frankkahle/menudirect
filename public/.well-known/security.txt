@@ -1,0 +1,9 @@
+Contact: mailto:support@sos-tech.ca
+Contact: tel:+1-506-910-5547
+Expires: 2027-05-19T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://menudirect.ca/.well-known/security.txt
+# MenuDirect is operated by SOS Technical Services (sos-tech.ca).
+# No paid bug bounty program; reports are reviewed case-by-case and
+# researchers may be acknowledged in writing.
+# Please include: vulnerability category + affected URL + proof-of-concept.

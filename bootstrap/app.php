@@ -25,6 +25,11 @@ return Application::configure(basePath: dirname(__DIR__))
             "admin" => \App\Http\Middleware\AdminMiddleware::class,
             "staff.auth" => \App\Http\Middleware\StaffAuth::class,
         ]);
+
+        // Security response headers on every browser-facing page.
+        $middleware->web(append: [
+            \App\Http\Middleware\SecurityHeaders::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

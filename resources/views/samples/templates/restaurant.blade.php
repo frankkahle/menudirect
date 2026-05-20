@@ -12,7 +12,7 @@
 {{-- Initialize Cart if ordering is enabled --}}
 @if($orderingEnabled)
 <div x-data="cart({
-    apiBaseUrl: '{{ config('services.portal.url', 'https://portal.sos-tech.ca') }}',
+    apiBaseUrl: '',
     restaurantSlug: '{{ $site['slug'] }}',
     taxRate: {{ floatval($orderingConfig['tax_rate'] ?? 0.15) }},
     minimumOrder: {{ floatval($orderingConfig['minimum_order'] ?? 0) }},

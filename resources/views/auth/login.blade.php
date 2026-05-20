@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sign in — MenuDirect</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css'])
 </head>
 <body class="bg-gray-50 min-h-screen flex items-center justify-center px-4">
     <div class="max-w-md w-full">
@@ -13,17 +13,17 @@
             <p class="text-sm text-gray-500 mt-2">Restaurant owner portal</p>
         </div>
 
-        <div class="bg-white border rounded-lg shadow-sm p-6">
+        <div class="bg-white border border-gray-200 rounded-lg shadow-xs p-6">
             <h2 class="text-xl font-semibold mb-4 text-gray-900">Sign in</h2>
 
             @if (session('status'))
-                <div class="mb-4 p-3 bg-green-50 border border-green-200 rounded text-sm text-green-800">
+                <div class="mb-4 p-3 bg-green-50 border border-green-200 rounded-sm text-sm text-green-800">
                     {{ session('status') }}
                 </div>
             @endif
 
             @if ($errors->any())
-                <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded text-sm text-red-800">
+                <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-sm text-sm text-red-800">
                     {{ $errors->first() }}
                 </div>
             @endif
@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <label class="flex items-center gap-2 text-sm text-gray-700">
-                    <input type="checkbox" name="remember" class="rounded">
+                    <input type="checkbox" name="remember" class="rounded-sm">
                     Remember me
                 </label>
                 <button type="submit" class="w-full px-4 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700">

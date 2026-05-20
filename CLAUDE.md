@@ -77,6 +77,7 @@ It was **migrated off the SOS Tech monorepo** on 2026-05-18 and now lives on its
 │   │   ├── AdminMiddleware.php      # Checks is_admin
 │   │   ├── StaffAuth.php            # Staff tablet auth (separate guard)
 │   │   ├── VerifyCaptcha.php        # Rate-limit-based CAPTCHA for login attempts
+│   │   ├── SecurityHeaders.php      # CSP + Referrer/Permissions/COOP headers (web group)
 │   │   └── TrustProxies (built-in)  # HAProxy header trust set in bootstrap/app.php
 │   ├── Observers/
 │   │   └── RestaurantSiteObserver.php  # Auto SEO: cache-bust + IndexNow ping on changes
@@ -304,11 +305,20 @@ sudo -u www-data php artisan view:clear
 systemctl restart php8.3-fpm
 ```
 
-### Clear Redis (sessions + sitemap caches + queue)
+### Clear caches (sitemap, custom-domain resolution)
 ```bash
-redis-cli FLUSHDB
+cd /var/www/app && sudo -u www-data php artisan cache:clear
 ```
-Use sparingly — this logs out all owner sessions.
+This is the right tool for a stale sitemap or `custom_domain:*` entry. The app
+cache lives on **Redis DB 1** (`REDIS_CACHE_DB=1`); sessions + queue live on
+**Redis DB 0**. `cache:clear` targets only DB 1, so it leaves owner sessions
+and pending queue jobs intact.
+
+**Do NOT use `redis-cli FLUSHDB` to bust caches** — with no `-n` flag it operates
+on DB 0, so it clears sessions + queue but leaves the sitemap caches in DB 1
+untouched (the opposite of what you want). If you genuinely need to wipe
+everything (sessions + queue + cache), use `redis-cli FLUSHALL` — sparingly,
+since it logs out all owner sessions and drops any queued jobs.
 
 ### Trigger a manual IndexNow ping
 ```bash
@@ -366,6 +376,10 @@ These are tracked but intentionally not done — don't proactively pick them up.
 9. **SSH hardening** — `PasswordAuthentication no` on this VM. Per Frank: not now.
 
 10. **Demo site curation** — Frank will decide which demo sites to archive (using the new `archived_at` column) once he's settled in.
+
+11. **Enforce CSP** — `SecurityHeaders` middleware currently ships `Content-Security-Policy-Report-Only` (config flag `security.csp_enforce`, default false). Open a few restaurant pages + portal login in a browser, confirm no CSP violations in the console, then set `CSP_ENFORCE=true` in `.env` + `php artisan optimize`.
+
+12. **Bundle remaining front-end assets locally** — the portal **login page is done** (`auth/login.blade.php` now uses `@vite(['resources/css/app.css'])` / compiled Tailwind v4). 12 other views still load Tailwind/Alpine/Mapbox from CDNs (`cdn.tailwindcss.com` etc.). A Vite + Tailwind v4 pipeline exists (`resources/css/app.css`, build with `node node_modules/vite/bin/vite.js build` — the `.bin/vite` symlink lacks the exec bit). Blocker for the rest: `samples/layout.blade.php` generates per-restaurant brand colors (`bg-brand`, etc.) via the CDN's runtime JIT from PHP-injected hex values — a static build can't reproduce that. Migrating it requires refactoring brand theming onto CSS custom properties first. Note: CDN is Tailwind v3, the local build is v4 — converting a view means accounting for v4's renamed utilities (`shadow-sm`→`shadow-xs`, `rounded`→`rounded-sm`, default `border` color, etc.).
 
 ---
 
