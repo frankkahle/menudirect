@@ -50,7 +50,7 @@ class RestaurantMenuController extends Controller
         $data['active'] = true;
 
         $category = MenuCategory::create($data);
-        $this->clearSiteCache($site);
+        $this->clearRestaurantSiteCache($site);
 
         if ($request->wantsJson()) {
             return response()->json([
@@ -77,7 +77,7 @@ class RestaurantMenuController extends Controller
         ]);
 
         $category->update($data);
-        $this->clearSiteCache($site);
+        $this->clearRestaurantSiteCache($site);
 
         if ($request->wantsJson()) {
             return response()->json([
@@ -105,7 +105,7 @@ class RestaurantMenuController extends Controller
         }
 
         $category->delete();
-        $this->clearSiteCache($site);
+        $this->clearRestaurantSiteCache($site);
 
         if ($request->wantsJson()) {
             return response()->json(['success' => true]);
@@ -132,7 +132,7 @@ class RestaurantMenuController extends Controller
                 ->update(['sort_order' => $index]);
         }
 
-        $this->clearSiteCache($site);
+        $this->clearRestaurantSiteCache($site);
 
         return response()->json(['success' => true]);
     }
@@ -163,7 +163,7 @@ class RestaurantMenuController extends Controller
         $data['active'] = true;
 
         $item = MenuItem::create($data);
-        $this->clearSiteCache($site);
+        $this->clearRestaurantSiteCache($site);
 
         if ($request->wantsJson()) {
             return response()->json([
@@ -198,7 +198,7 @@ class RestaurantMenuController extends Controller
         ]);
 
         $item->update($data);
-        $this->clearSiteCache($site);
+        $this->clearRestaurantSiteCache($site);
 
         if ($request->wantsJson()) {
             return response()->json([
@@ -224,7 +224,7 @@ class RestaurantMenuController extends Controller
         }
 
         $item->delete();
-        $this->clearSiteCache($site);
+        $this->clearRestaurantSiteCache($site);
 
         if ($request->wantsJson()) {
             return response()->json(['success' => true]);
@@ -252,7 +252,7 @@ class RestaurantMenuController extends Controller
                 ->update(['sort_order' => $index]);
         }
 
-        $this->clearSiteCache($site);
+        $this->clearRestaurantSiteCache($site);
 
         return response()->json(['success' => true]);
     }
@@ -281,7 +281,7 @@ class RestaurantMenuController extends Controller
         $item->menu_category_id = $newCategory->id;
         $item->save();
 
-        $this->clearSiteCache($site);
+        $this->clearRestaurantSiteCache($site);
 
         return response()->json([
             'success' => true,
@@ -323,7 +323,7 @@ class RestaurantMenuController extends Controller
             // Fallback: store as-is if GD can't read the format
             $path = $file->store($storagePath, 'public');
             $item->update(['image_path' => $path]);
-            $this->clearSiteCache($site);
+            $this->clearRestaurantSiteCache($site);
             return $request->wantsJson()
                 ? response()->json(['success' => true, 'image_url' => $item->fresh()->image_url])
                 : back()->with('status', 'Item image uploaded successfully!');
@@ -350,7 +350,7 @@ class RestaurantMenuController extends Controller
 
         $path = $storagePath . '/' . $filename;
         $item->update(['image_path' => $path]);
-        $this->clearSiteCache($site);
+        $this->clearRestaurantSiteCache($site);
 
         if ($request->wantsJson()) {
             return response()->json([
@@ -388,7 +388,7 @@ class RestaurantMenuController extends Controller
         }
 
         $item->save();
-        $this->clearSiteCache($site);
+        $this->clearRestaurantSiteCache($site);
 
         return response()->json([
             'success' => true,
@@ -408,7 +408,7 @@ class RestaurantMenuController extends Controller
 
         $item->active = !$item->active;
         $item->save();
-        $this->clearSiteCache($site);
+        $this->clearRestaurantSiteCache($site);
 
         return response()->json([
             'success' => true,
@@ -429,7 +429,7 @@ class RestaurantMenuController extends Controller
         $copy->sort_order = $this->nextSortOrder($item->menu_category_id);
         $copy->save();
 
-        $this->clearSiteCache($site);
+        $this->clearRestaurantSiteCache($site);
 
         return response()->json([
             'success' => true,
@@ -468,7 +468,7 @@ class RestaurantMenuController extends Controller
         $this->authorizeItem($site, $item);
 
         $newStatus = $item->toggleFeatured();
-        $this->clearSiteCache($site);
+        $this->clearRestaurantSiteCache($site);
 
         if ($request->wantsJson()) {
             return response()->json([
