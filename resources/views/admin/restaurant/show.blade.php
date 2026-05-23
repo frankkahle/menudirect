@@ -183,7 +183,7 @@
                         Edit Site
                     </a>
                     @if($site->status === 'demo')
-                    <a href="{{ route('admin.restaurant.convert', $site) }}"
+                    <a href="https://portal.sos-tech.ca/admin/restaurant/{{ $site->id }}/convert"
                         class="block w-full px-4 py-2 bg-orange-600 text-white text-center rounded-lg hover:bg-orange-700">
                         Convert to Paying
                     </a>
@@ -274,7 +274,7 @@
                 <h3 class="text-lg font-bold text-gray-900 mb-4">Client</h3>
                 @if($site->client)
                 <div>
-                    <a href="{{ route('admin.clients.show', $site->client_id) }}" class="text-indigo-600 hover:underline font-medium">
+                    <a href="https://portal.sos-tech.ca/admin/clients/{{ $site->client_id }}" class="text-indigo-600 hover:underline font-medium">
                         {{ $site->client->name }}
                     </a>
                     <p class="text-sm text-gray-500">{{ $site->client->email }}</p>

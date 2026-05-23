@@ -1,4 +1,4 @@
-@extends('layouts.client')
+@extends('layouts.app')
 
 @section('title', 'Choose Template — ' . $site->business_name)
 

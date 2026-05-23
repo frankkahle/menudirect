@@ -410,105 +410,23 @@
 </div>
 
     
-    <!-- Custom Domains Management -->
+    <!-- Custom Domains Management (delegated to portal.sos-tech.ca) -->
     <div class="bg-white rounded-lg shadow-md p-6 mt-6">
         <h2 class="text-xl font-bold text-gray-900 mb-2">Custom Domains</h2>
-        <p class="text-sm text-gray-500 mb-4">Manage custom domains for this restaurant site. DNS records are automatically created in Cloudflare pointing to edge.sos-tech.ca.</p>
-
-        @if(session('domain_status'))
-            @php $ds = session('domain_status'); @endphp
-            <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-4">
-                <h3 class="font-semibold text-indigo-900 mb-2">Status Check: {{ $ds['domain'] }}</h3>
-                <div class="space-y-2 text-sm">
-                    @foreach($ds['checks'] ?? [] as $checkName => $check)
-                        <div class="flex items-start gap-2">
-                            @if(($check['status'] ?? '') === 'active' || ($check['status'] ?? '') === 'ok')
-                                <span class="text-green-600 font-bold">&#10003;</span>
-                            @elseif(($check['status'] ?? '') === 'error' || ($check['status'] ?? '') === 'failed' || ($check['status'] ?? '') === 'missing' || ($check['status'] ?? '') === 'not_configured')
-                                <span class="text-red-600 font-bold">&#10007;</span>
-                            @else
-                                <span class="text-yellow-600 font-bold">&#9679;</span>
-                            @endif
-                            <div>
-                                <span class="font-medium text-gray-700 capitalize">{{ str_replace('_', ' ', $checkName) }}:</span>
-                                <span class="text-gray-600">{{ $check['message'] ?? 'Unknown' }}</span>
-                                @if(!empty($check['name_servers']))
-                                    <div class="text-xs text-gray-500 mt-1">Nameservers: {{ implode(', ', $check['name_servers']) }}</div>
-                                @endif
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        @endif
-
         @if($site->customDomains->count())
-            <div class="space-y-3 mb-4">
+            <ul class="text-sm text-gray-700 mb-4 list-disc list-inside">
                 @foreach($site->customDomains as $cd)
-                    <div class="flex items-center justify-between p-3 rounded-lg border {{ $cd->is_primary ? 'border-green-300 bg-green-50' : 'border-gray-200 bg-gray-50' }}">
-                        <div>
-                            <span class="font-medium text-gray-900">{{ $cd->domain }}</span>
-                            @if($cd->is_primary)
-                                <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-200 text-green-800">Primary</span>
-                            @endif
-                            @if($cd->dns_configured)
-                                <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">DNS Active</span>
-                            @else
-                                <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">DNS Pending</span>
-                            @endif
-                            @if($cd->status === 'failed')
-                                <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">Failed</span>
-                            @endif
-                            @if($cd->notes)
-                                <p class="text-xs text-gray-500 mt-1">{{ $cd->notes }}</p>
-                            @endif
-                        </div>
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <a href="{{ route('admin.restaurant.check-custom-domain-status', [$site, $cd]) }}"
-                               class="text-xs px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700">Check Status</a>
-                            <form action="{{ route('admin.restaurant.activate-custom-domain-haproxy', [$site, $cd]) }}" method="POST" class="inline" onsubmit="return confirm('This will obtain an SSL cert and activate {{ $cd->domain }} on HAProxy. Continue?')">
-                                @csrf
-                                <button type="submit" class="text-xs px-2 py-1 bg-orange-600 text-white rounded hover:bg-orange-700">Activate HAProxy</button>
-                            </form>
-                            @if(!$cd->is_primary)
-                                <form action="{{ route('admin.restaurant.set-primary-custom-domain', [$site, $cd]) }}" method="POST" class="inline">
-                                    @csrf
-                                    <button type="submit" class="text-xs px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700">Set Primary</button>
-                                </form>
-                            @endif
-                            <form action="{{ route('admin.restaurant.remove-custom-domain', [$site, $cd]) }}" method="POST" class="inline" onsubmit="return confirm('Remove {{ $cd->domain }}?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-xs px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700">Remove</button>
-                            </form>
-                        </div>
-                    </div>
+                    <li>{{ $cd->domain }} @if($cd->is_primary)<span class="ml-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">Primary</span>@endif</li>
                 @endforeach
-            </div>
+            </ul>
         @else
-            <div class="text-sm text-gray-500 mb-4 p-3 bg-gray-50 rounded-lg">No custom domains configured yet.</div>
+            <p class="text-sm text-gray-500 mb-4">No custom domains configured for this site.</p>
         @endif
-
-        <!-- Add New Domain Form -->
-        <form action="{{ route('admin.restaurant.add-custom-domain', $site) }}" method="POST" class="border-t border-gray-200 pt-4">
-            @csrf
-            <div class="flex items-end gap-3">
-                <div class="flex-1">
-                    <label for="new_custom_domain" class="block text-sm font-medium text-gray-700 mb-1">Add Domain</label>
-                    <input type="text" name="domain" id="new_custom_domain"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
-                        placeholder="e.g. mybusiness.com" required>
-                </div>
-                <label class="flex items-center gap-2 pb-2">
-                    <input type="checkbox" name="is_primary" value="1" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-                    <span class="text-sm text-gray-700">Primary</span>
-                </label>
-                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium whitespace-nowrap">
-                    Add & Configure DNS
-                </button>
-            </div>
-            <p class="text-xs text-gray-400 mt-2">Creates CNAME records in Cloudflare pointing to edge.sos-tech.ca. Domain will be added to Cloudflare if not already there.</p>
-        </form>
+        <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 text-sm">
+            <p class="text-gray-700 mb-2"><strong>Custom domain management lives on the SOS portal.</strong></p>
+            <p class="text-gray-600 mb-3">HAProxy + Cloudflare provisioning happens on portal.sos-tech.ca. Use the link below to add, activate, or remove domains for this restaurant.</p>
+            <a href="https://portal.sos-tech.ca/admin/restaurant/{{ $site->id }}/edit#domains" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 bg-indigo-600 text-white text-xs font-medium rounded hover:bg-indigo-700">Manage on portal.sos-tech.ca →</a>
+        </div>
     </div>
 
     @include('admin.partials.restaurant-billing')

@@ -197,7 +197,7 @@
                     </td>
                     <td class="px-6 py-4">
                         @if($site->client)
-                            <a href="{{ route('admin.clients.show', $site->client_id) }}" class="text-indigo-600 hover:underline">
+                            <a href="https://portal.sos-tech.ca/admin/clients/{{ $site->client_id }}" class="text-indigo-600 hover:underline">
                                 {{ $site->client->name }}
                             </a>
                             <div class="text-sm text-gray-500">{{ $site->client->email }}</div>
@@ -230,7 +230,7 @@
                         <a href="{{ route('admin.restaurant.show', $site) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
                         <a href="{{ route('admin.restaurant.edit', $site) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
                         @if($site->status === 'demo')
-                            <a href="{{ route('admin.restaurant.convert', $site) }}" class="text-orange-600 hover:text-orange-900 font-semibold">Convert</a>
+                            <a href="https://portal.sos-tech.ca/admin/restaurant/{{ $site->id }}/convert" class="text-orange-600 hover:text-orange-900 font-semibold">Convert</a>
                         @endif
                         @if($site->status !== 'active')
                             <form action="{{ route('admin.restaurant.toggle-status', $site) }}" method="POST" class="inline">

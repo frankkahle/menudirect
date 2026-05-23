@@ -5,7 +5,7 @@
 @section('content')
 <div class="max-w-4xl mx-auto py-8 px-4">
     <div class="mb-8">
-        <a href="{{ route('client.restaurant.order.plans') }}" class="text-indigo-600 hover:text-indigo-800">
+        <a href="https://menudirect.ca/#pricing" class="text-indigo-600 hover:text-indigo-800">
             &larr; Back to Plans
         </a>
     </div>

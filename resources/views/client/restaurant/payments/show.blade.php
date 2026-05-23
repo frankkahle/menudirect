@@ -68,7 +68,7 @@
                 </div>
 
                 <div class="flex gap-3">
-                    <a href="{{ route('client.billing.services') }}" class="inline-flex items-center px-5 py-2.5 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700">
+                    <a href="https://portal.sos-tech.ca/client/billing/services" class="inline-flex items-center px-5 py-2.5 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700">
                         View Upgrade Options
                     </a>
                 </div>

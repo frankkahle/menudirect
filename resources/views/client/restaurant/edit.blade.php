@@ -772,7 +772,7 @@
             </svg>
             <h3 class="text-lg font-medium text-gray-900 mb-2">Delivery Zones</h3>
             <p class="text-sm text-gray-600 mb-4">Set distance-based delivery fees with automatic address validation. Available on the MenuDirect Max plan.</p>
-            <a href="{{ route('client.restaurant.order.plans') }}" class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-md text-sm font-medium hover:bg-purple-700">
+            <a href="https://menudirect.ca/#pricing" class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-md text-sm font-medium hover:bg-purple-700">
                 Upgrade to Max
             </a>
         </div>
