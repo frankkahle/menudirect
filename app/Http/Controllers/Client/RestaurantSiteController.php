@@ -571,9 +571,18 @@ class RestaurantSiteController extends Controller
             'ordering_settings.tax_rate' => ['nullable', 'numeric', 'min:0', 'max:1'],
         ]);
 
+        // Unchecked checkboxes are absent from the request entirely, so coerce
+        // each boolean explicitly. Otherwise unchecking (e.g. "Accept Pickup
+        // Orders") just drops the key and the view's `?? true` default silently
+        // turns it back on. Mirrors $request->boolean('force_closed') above.
+        $orderingSettings = $data['ordering_settings'] ?? [];
+        $orderingSettings['accepts_pickup'] = $request->boolean('ordering_settings.accepts_pickup');
+        $orderingSettings['accepts_delivery'] = $request->boolean('ordering_settings.accepts_delivery');
+        $orderingSettings['auto_confirm'] = $request->boolean('ordering_settings.auto_confirm');
+
         $updateData = [
             'ordering_enabled' => $data['ordering_enabled'] ?? false,
-            'ordering_settings' => $data['ordering_settings'] ?? [],
+            'ordering_settings' => $orderingSettings,
         ];
 
         // Save coordinates if provided
