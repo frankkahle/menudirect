@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('audit_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->nullable()->constrained()->onDelete('cascade');
+            // On this VM the "client" is a User (App\Models\Client is an alias for User);
+            // there is no separate `clients` table, and no `domains` table at all.
+            $table->foreignId('client_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade'); // For admin actions
-            $table->foreignId('domain_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('domain_id')->nullable();
 
             $table->string('action', 100); // lock, unlock, transfer_start, epp_access, contact_update, etc.
             $table->string('resource_type', 50)->nullable(); // domain, contact, transfer, nameserver
