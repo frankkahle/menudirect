@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             "admin" => \App\Http\Middleware\AdminMiddleware::class,
             "staff.auth" => \App\Http\Middleware\StaffAuth::class,
+            "manage.auth" => \App\Http\Middleware\VerifyManagementApiToken::class,
         ]);
 
         // Security response headers on every browser-facing page.

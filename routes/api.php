@@ -146,3 +146,10 @@ Route::post('/restaurant/{slug}/catering/inquiries', [\App\Http\Controllers\Api\
 Route::get('/domain/check', [\App\Http\Controllers\Api\DomainCheckController::class, 'check'])
     ->middleware(['web', 'auth', 'throttle:30,1'])
     ->name('api.domain.check');
+
+// --------------------------------------------------------------------
+// Management / Provisioning API — portal.sos-tech.ca only (static secret + IP allowlist)
+// --------------------------------------------------------------------
+Route::prefix('v1/manage')->middleware(['manage.auth', 'throttle:60,1'])->group(function () {
+    Route::post('/ping', fn () => response()->json(['ok' => true]))->name('api.manage.ping');
+});

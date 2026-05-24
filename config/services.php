@@ -49,6 +49,12 @@ return [
         'intake_token' => env('MENUDIRECT_INTAKE_TOKEN'),
     ],
 
+    // Management/provisioning API — only portal.sos-tech.ca calls it (static secret + IP allowlist)
+    'management' => [
+        'token' => env('MANAGEMENT_API_TOKEN'),
+        'allowed_ips' => array_filter(array_map('trim', explode(',', (string) env('MANAGEMENT_API_ALLOWED_IPS', '')))),
+    ],
+
     // Cloudflare Turnstile — defenses for public-facing forms
     'turnstile' => [
         'site_key' => env('TURNSTILE_SITE_KEY'),
