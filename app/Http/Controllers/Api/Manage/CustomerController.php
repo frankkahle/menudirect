@@ -33,6 +33,11 @@ class CustomerController extends Controller
             (bool) ($data['send_welcome_email'] ?? false)
         );
 
+        app(\App\Services\Audit\AuditService::class)->log('manage.customer.created', [
+            'resource_type' => 'restaurant_site', 'resource_id' => $r['site']->id,
+            'description' => "Customer provisioned (owner #{$r['owner']->id}, site '{$r['site']->slug}') via management API",
+        ]);
+
         return response()->json([
             'owner' => new ManagedOwnerResource($r['owner']),
             'set_password_url' => $r['set_password_url'],

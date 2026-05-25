@@ -9,7 +9,7 @@
 
 | # | Epic | State | Size | Recommended order |
 |---|------|-------|------|-------------------|
-| 1 | Management / provisioning API (SOS portal → MenuDirect) | Greenfield | Medium | **1st** |
+| 1 | Management / provisioning API (SOS portal → MenuDirect) | **Implemented** (`feat/management-api`) | Medium | ✅ done |
 | 2 | Reservations: harden + table/floor management | Mostly built, needs audit | Medium ×2 | 2nd |
 | 3 | Full in-person POS (terminal + cash + receipts) | Order-mgmt only today | Large (split) | 3rd, after payment-rail decision |
 | 4 | External POS integrations (Square/Toast/Clover…) | Greenfield | Large | **Deferred / parked** |

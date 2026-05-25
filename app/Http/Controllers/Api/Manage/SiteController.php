@@ -26,6 +26,11 @@ class SiteController extends Controller
 
         $site = $this->svc->provisionSite($data);
 
+        app(\App\Services\Audit\AuditService::class)->log('manage.site.provisioned', [
+            'resource_type' => 'restaurant_site', 'resource_id' => $site->id,
+            'description' => "Site '{$site->slug}' provisioned via management API",
+        ]);
+
         return response()->json(['site' => new ManagedSiteResource($site)], 201);
     }
 
@@ -37,6 +42,11 @@ class SiteController extends Controller
 
         $site = $this->svc->changePlan($site, (int) $data['plan_id']);
 
+        app(\App\Services\Audit\AuditService::class)->log('manage.site.plan_changed', [
+            'resource_type' => 'restaurant_site', 'resource_id' => $site->id,
+            'description' => "Site '{$site->slug}' plan changed to {$site->plan} via management API",
+        ]);
+
         return response()->json(['site' => new ManagedSiteResource($site)]);
     }
 
@@ -47,6 +57,11 @@ class SiteController extends Controller
         ]);
 
         $site = $this->svc->setStatus($site, $data['status']);
+
+        app(\App\Services\Audit\AuditService::class)->log('manage.site.status_changed', [
+            'resource_type' => 'restaurant_site', 'resource_id' => $site->id,
+            'description' => "Site '{$site->slug}' status set to {$data['status']} via management API",
+        ]);
 
         return response()->json(['site' => new ManagedSiteResource($site)]);
     }

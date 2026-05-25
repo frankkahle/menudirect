@@ -72,6 +72,7 @@ sites are rendered by `SampleSiteController`; the marketing apex by `MenuDirectC
 - Per-restaurant multi-admin via the `restaurant_site_user` pivot, plus a legacy single-owner
   path (`restaurant_sites.client_id`)
 - A platform admin sees and manages every site (replaces the old impersonation workflow)
+- **Management API** (`/api/v1/manage`, token + IP-allowlisted) lets `portal.sos-tech.ca` create owners, provision sites, change plans, and set status
 
 **Marketing & growth**
 - Lead intake with a 5-layer spam defense (rate limit, honeypot, time-check, content filter,

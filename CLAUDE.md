@@ -277,6 +277,22 @@ Then the controller:
 
 ---
 
+## Management / provisioning API (Epic 1)
+
+Lets `portal.sos-tech.ca` (the sales/billing master) apply operational state to MenuDirect.
+One-way push; billing stays in the SOS portal. Spec/plan: `docs/superpowers/specs/2026-05-23-management-api-design.md`, `docs/superpowers/plans/2026-05-23-management-api.md`.
+
+- **Auth**: static bearer secret (`MANAGEMENT_API_TOKEN`) + IP allowlist (`MANAGEMENT_API_ALLOWED_IPS`, the SOS portal IP). Fail-closed. Middleware `manage.auth` (`VerifyManagementApiToken`).
+- **Base path**: `/api/v1/manage` (group also has `idempotency` + `throttle:60,1`). Pass `Idempotency-Key` on POSTs to make retries safe.
+- **Endpoints**: `POST /owners` (creates login, returns one-time set-password link), `POST /sites` (provision), `PATCH /sites/{id}/plan`, `PATCH /sites/{id}/status` (demo/active/suspended/archived), `POST /customers` (atomic owner+site+plan).
+- **Logic** lives in `app/Services/SiteProvisioningService.php` (no billing). Suspended sites serve a 503 holding page (`SampleSiteController::isSuspended`). Every command writes an `audit_logs` row (`manage.*`).
+- Error envelope: `{"error":{"code","message","details"}}` — 401/403/404/409/422.
+
+### Running tests
+Tests run against a dedicated **`menudirect_test`** MySQL DB (the restaurant tables have no create-migrations, so `migrate:fresh` loads `database/schema/mysql-schema.sql` captured via `php artisan schema:dump`). One-time setup: create `menudirect_test` and `GRANT ALL ON menudirect_test.* TO 'menudirect'@'localhost'` (needs MySQL root via `mysql --protocol=socket`). `phpunit.xml` points both the `mysql` and `menudirect` connections at it; `tests/TestCase.php` shares one PDO across them for transactional isolation. Run: `php artisan test --filter=Manage`.
+
+---
+
 ## Sos-tech.ca relationship
 
 - **Lead form** still lives on sos-tech.ca/menudirect.ca → POSTs to new VM's intake API. Sos-tech's `PORTAL_API_URL=http://192.168.23.65`.

@@ -22,6 +22,13 @@ class OwnerController extends Controller
 
         $r = $this->svc->createOwner($data['email'], $data['name'], (bool) ($data['reissue_invite'] ?? false));
 
+        if (! $r['already_existed']) {
+            app(\App\Services\Audit\AuditService::class)->log('manage.owner.created', [
+                'resource_type' => 'user', 'resource_id' => $r['owner']->id,
+                'description' => 'Owner created via management API',
+            ]);
+        }
+
         return response()->json([
             'owner' => new ManagedOwnerResource($r['owner']),
             'set_password_url' => $r['set_password_url'],
