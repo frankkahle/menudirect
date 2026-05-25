@@ -33,5 +33,22 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Consistent error envelope for the management API.
+        $exceptions->render(function (\Illuminate\Validation\ValidationException $e, \Illuminate\Http\Request $request) {
+            if ($request->is('api/v1/manage/*')) {
+                return response()->json(['error' => [
+                    'code' => 'validation_failed', 'message' => $e->getMessage(), 'details' => $e->errors(),
+                ]], 422);
+            }
+        });
+        $exceptions->render(function (\App\Exceptions\ProvisioningConflictException $e, \Illuminate\Http\Request $request) {
+            if ($request->is('api/v1/manage/*')) {
+                return response()->json(['error' => ['code' => 'conflict', 'message' => $e->getMessage()]], 409);
+            }
+        });
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, \Illuminate\Http\Request $request) {
+            if ($request->is('api/v1/manage/*')) {
+                return response()->json(['error' => ['code' => 'not_found', 'message' => 'Resource not found.']], 404);
+            }
+        });
     })->create();

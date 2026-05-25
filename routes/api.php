@@ -150,6 +150,14 @@ Route::get('/domain/check', [\App\Http\Controllers\Api\DomainCheckController::cl
 // --------------------------------------------------------------------
 // Management / Provisioning API — portal.sos-tech.ca only (static secret + IP allowlist)
 // --------------------------------------------------------------------
+// {site} binding must see archived sites too, so status changes work on them.
+Route::bind('site', fn ($id) => \App\Models\RestaurantSite::withoutGlobalScope('notArchived')->findOrFail($id));
+
 Route::prefix('v1/manage')->middleware(['manage.auth', 'throttle:60,1'])->group(function () {
     Route::post('/ping', fn () => response()->json(['ok' => true]))->name('api.manage.ping');
+    Route::post('/owners', [\App\Http\Controllers\Api\Manage\OwnerController::class, 'store'])->name('api.manage.owners.store');
+    Route::post('/sites', [\App\Http\Controllers\Api\Manage\SiteController::class, 'store'])->name('api.manage.sites.store');
+    Route::patch('/sites/{site}/plan', [\App\Http\Controllers\Api\Manage\SiteController::class, 'changePlan'])->name('api.manage.sites.plan');
+    Route::patch('/sites/{site}/status', [\App\Http\Controllers\Api\Manage\SiteController::class, 'setStatus'])->name('api.manage.sites.status');
+    Route::post('/customers', [\App\Http\Controllers\Api\Manage\CustomerController::class, 'store'])->name('api.manage.customers.store');
 });
