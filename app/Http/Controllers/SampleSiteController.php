@@ -60,6 +60,12 @@ class SampleSiteController extends Controller
             return $this->renderFromConfig($slug, $sites[$slug], $path);
         }
 
+        // Suspended sites serve a holding page (the data API excludes suspended,
+        // so without this they'd 404 as if they never existed).
+        if ($this->isSuspended($slug)) {
+            return response()->view('errors.site-suspended', [], 503);
+        }
+
         // If not found in config, try to fetch from Portal API (dynamic restaurant sites)
         $site = $this->fetchFromPortalApi($slug);
 
@@ -69,6 +75,17 @@ class SampleSiteController extends Controller
 
         // Not found in either source
         abort(404);
+    }
+
+    /**
+     * Whether a site with this slug exists but is suspended.
+     */
+    protected function isSuspended(string $slug): bool
+    {
+        return \App\Models\RestaurantSite::withoutGlobalScope('notArchived')
+            ->where('slug', $slug)
+            ->where('status', \App\Models\RestaurantSite::STATUS_SUSPENDED)
+            ->exists();
     }
 
     /**

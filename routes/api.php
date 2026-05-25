@@ -153,7 +153,7 @@ Route::get('/domain/check', [\App\Http\Controllers\Api\DomainCheckController::cl
 // {site} binding must see archived sites too, so status changes work on them.
 Route::bind('site', fn ($id) => \App\Models\RestaurantSite::withoutGlobalScope('notArchived')->findOrFail($id));
 
-Route::prefix('v1/manage')->middleware(['manage.auth', 'throttle:60,1'])->group(function () {
+Route::prefix('v1/manage')->middleware(['manage.auth', 'idempotency', 'throttle:60,1'])->group(function () {
     Route::post('/ping', fn () => response()->json(['ok' => true]))->name('api.manage.ping');
     Route::post('/owners', [\App\Http\Controllers\Api\Manage\OwnerController::class, 'store'])->name('api.manage.owners.store');
     Route::post('/sites', [\App\Http\Controllers\Api\Manage\SiteController::class, 'store'])->name('api.manage.sites.store');
